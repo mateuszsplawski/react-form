@@ -1,17 +1,28 @@
 import { Button, Form, Input, Select } from "antd";
-import { Option } from "antd/lib/mentions";
+import { FormLayout } from "antd/lib/form/Form";
+import { Rule } from "rc-field-form/lib/interface";
 
 import { Upload } from "components/Upload/Upload";
 import { contractorForm } from "constants/index";
 import { useContractorForm } from "./useContractorForm";
 
 export const ContractorForm = () => {
-  const { form } = useContractorForm();
+  const {
+    form,
+    initialValues,
+    idFieldPlaceholder,
+    idFieldRules,
+    handleSelectChange,
+    handleFinish,
+    handleReset,
+  } = useContractorForm();
   return (
     <Form
-      name="contractorForm"
+      initialValues={initialValues}
+      name={contractorForm.formName}
       form={form}
-      onFinish={(values) => console.log(values)}
+      layout={contractorForm.formLayout as FormLayout}
+      onFinish={handleFinish}
     >
       <Form.Item
         label={contractorForm.nameField.label}
@@ -29,30 +40,35 @@ export const ContractorForm = () => {
         label={contractorForm.contractorTypeField.label}
         name={contractorForm.contractorTypeField.name}
       >
-        <Select>
-          {contractorForm.contractorTypeField.options.map(({ name, value }) => (
-            <Option key={value} value={value}>
-              {name}
-            </Option>
-          ))}
+        <Select onChange={handleSelectChange}>
+          {Object.values(contractorForm.contractorTypeField.options).map(
+            ({ name, value }) => (
+              <Select.Option key={value} value={value}>
+                {name}
+              </Select.Option>
+            )
+          )}
         </Select>
       </Form.Item>
       <Form.Item
         label={contractorForm.idField.label}
         name={contractorForm.idField.name}
+        rules={idFieldRules as Rule[]}
+        hasFeedback
       >
-        <Input />
+        <Input placeholder={idFieldPlaceholder} />
       </Form.Item>
       <Form.Item
         label={contractorForm.photoField.label}
         name={contractorForm.photoField.name}
       >
-        <Upload />
+        <Upload form={form} />
       </Form.Item>
       <Form.Item>
         <Button type="primary" htmlType="submit">
           {contractorForm.submitButtonName}
         </Button>
+        <Button onClick={handleReset}>{contractorForm.resetButtonName}</Button>
       </Form.Item>
     </Form>
   );
